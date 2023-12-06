@@ -4,7 +4,6 @@ namespace Illuminate\Database\Schema\Grammars;
 
 use Doctrine\DBAL\Schema\Index;
 use Illuminate\Database\Connection;
-use Illuminate\Database\Query\Expression;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Fluent;
@@ -17,7 +16,7 @@ class SQLiteGrammar extends Grammar
      *
      * @var string[]
      */
-    protected $modifiers = ['Increment', 'Nullable', 'Default', 'VirtualAs', 'StoredAs'];
+    protected $modifiers = ['VirtualAs', 'StoredAs', 'Nullable', 'Default', 'Increment'];
 
     /**
      * The columns available as serials.
@@ -29,8 +28,6 @@ class SQLiteGrammar extends Grammar
     /**
      * Compile the query to determine if a table exists.
      *
-     * @deprecated Will be removed in a future Laravel version.
-     *
      * @return string
      */
     public function compileTableExists()
@@ -39,70 +36,7 @@ class SQLiteGrammar extends Grammar
     }
 
     /**
-     * Compile the query to determine if the dbstat table is available.
-     *
-     * @return string
-     */
-    public function compileDbstatExists()
-    {
-        return "select exists (select 1 from pragma_compile_options where compile_options = 'ENABLE_DBSTAT_VTAB') as enabled";
-    }
-
-    /**
-     * Compile the query to determine the tables.
-     *
-     * @param  bool  $withSize
-     * @return string
-     */
-    public function compileTables($withSize = false)
-    {
-        return $withSize
-            ? 'select m.tbl_name as name, sum(s.pgsize) as size from sqlite_master as m '
-            .'join dbstat as s on s.name = m.name '
-            ."where m.type in ('table', 'index') and m.tbl_name not like 'sqlite_%' "
-            .'group by m.tbl_name '
-            .'order by m.tbl_name'
-            : "select name from sqlite_master where type = 'table' and name not like 'sqlite_%' order by name";
-    }
-
-    /**
-     * Compile the query to determine the views.
-     *
-     * @return string
-     */
-    public function compileViews()
-    {
-        return "select name, sql as definition from sqlite_master where type = 'view' order by name";
-    }
-
-    /**
-     * Compile the SQL needed to retrieve all table names.
-     *
-     * @deprecated Will be removed in a future Laravel version.
-     *
-     * @return string
-     */
-    public function compileGetAllTables()
-    {
-        return 'select type, name from sqlite_master where type = \'table\' and name not like \'sqlite_%\'';
-    }
-
-    /**
-     * Compile the SQL needed to retrieve all view names.
-     *
-     * @deprecated Will be removed in a future Laravel version.
-     *
-     * @return string
-     */
-    public function compileGetAllViews()
-    {
-        return 'select type, name from sqlite_master where type = \'view\'';
-    }
-
-    /**
      * Compile the query to determine the list of columns.
-     *
-     * @deprecated Will be removed in a future Laravel version.
      *
      * @param  string  $table
      * @return string
@@ -110,21 +44,6 @@ class SQLiteGrammar extends Grammar
     public function compileColumnListing($table)
     {
         return 'pragma table_info('.$this->wrap(str_replace('.', '__', $table)).')';
-    }
-
-    /**
-     * Compile the query to determine the columns.
-     *
-     * @param  string  $table
-     * @return string
-     */
-    public function compileColumns($table)
-    {
-        return sprintf(
-            "select name, type, not 'notnull' as 'nullable', dflt_value as 'default', pk as 'primary' "
-            .'from pragma_table_info(%s) order by cid asc',
-            $this->wrap(str_replace('.', '__', $table))
-        );
     }
 
     /**
@@ -295,7 +214,7 @@ class SQLiteGrammar extends Grammar
      *
      * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
      * @param  \Illuminate\Support\Fluent  $command
-     * @return string|null
+     * @return string
      */
     public function compileForeign(Blueprint $blueprint, Fluent $command)
     {
@@ -344,6 +263,26 @@ class SQLiteGrammar extends Grammar
     public function compileDropAllViews()
     {
         return "delete from sqlite_master where type in ('view')";
+    }
+
+    /**
+     * Compile the SQL needed to retrieve all table names.
+     *
+     * @return string
+     */
+    public function compileGetAllTables()
+    {
+        return 'select type, name from sqlite_master where type = \'table\' and name not like \'sqlite_%\'';
+    }
+
+    /**
+     * Compile the SQL needed to retrieve all view names.
+     *
+     * @return string
+     */
+    public function compileGetAllViews()
+    {
+        return 'select type, name from sqlite_master where type = \'view\'';
     }
 
     /**
@@ -471,7 +410,7 @@ class SQLiteGrammar extends Grammar
             $index->isPrimary(), $index->getFlags(), $index->getOptions()
         );
 
-        $platform = $connection->getDoctrineConnection()->getDatabasePlatform();
+        $platform = $schemaManager->getDatabasePlatform();
 
         return [
             $platform->getDropIndexSQL($command->from, $this->getTablePrefix().$blueprint->getTable()),
@@ -788,11 +727,7 @@ class SQLiteGrammar extends Grammar
      */
     protected function typeTimestamp(Fluent $column)
     {
-        if ($column->useCurrent) {
-            $column->default(new Expression('CURRENT_TIMESTAMP'));
-        }
-
-        return 'datetime';
+        return $column->useCurrent ? 'datetime default CURRENT_TIMESTAMP' : 'datetime';
     }
 
     /**
@@ -980,7 +915,7 @@ class SQLiteGrammar extends Grammar
         }
 
         if (! is_null($virtualAs = $column->virtualAs)) {
-            return " as ({$this->getValue($virtualAs)})";
+            return " as ({$virtualAs})";
         }
     }
 
@@ -1002,7 +937,7 @@ class SQLiteGrammar extends Grammar
         }
 
         if (! is_null($storedAs = $column->storedAs)) {
-            return " as ({$this->getValue($column->storedAs)}) stored";
+            return " as ({$column->storedAs}) stored";
         }
     }
 

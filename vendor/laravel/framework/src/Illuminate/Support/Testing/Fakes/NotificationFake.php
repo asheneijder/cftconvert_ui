@@ -14,7 +14,7 @@ use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\ReflectsClosures;
 use PHPUnit\Framework\Assert as PHPUnit;
 
-class NotificationFake implements Fake, NotificationDispatcher, NotificationFactory
+class NotificationFake implements NotificationDispatcher, NotificationFactory
 {
     use Macroable, ReflectsClosures;
 
@@ -222,6 +222,20 @@ class NotificationFake implements Fake, NotificationDispatcher, NotificationFact
     }
 
     /**
+     * Assert the total amount of times a notification was sent.
+     *
+     * @param  int  $expectedCount
+     * @param  string  $notification
+     * @return void
+     *
+     * @deprecated Use the assertSentTimes method instead
+     */
+    public function assertTimesSent($expectedCount, $notification)
+    {
+        $this->assertSentTimes($notification, $expectedCount);
+    }
+
+    /**
      * Get all of the notifications matching a truth-test callback.
      *
      * @param  mixed  $notifiable
@@ -306,10 +320,10 @@ class NotificationFake implements Fake, NotificationDispatcher, NotificationFact
                     $notifiableChannels,
                     fn ($channel) => $notification->shouldSend($notifiable, $channel) !== false
                 );
-            }
 
-            if (empty($notifiableChannels)) {
-                continue;
+                if (empty($notifiableChannels)) {
+                    continue;
+                }
             }
 
             $this->notifications[get_class($notifiable)][$notifiable->getKey()][get_class($notification)][] = [

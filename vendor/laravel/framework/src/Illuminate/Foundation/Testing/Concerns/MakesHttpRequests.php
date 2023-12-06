@@ -310,16 +310,6 @@ trait MakesHttpRequests
     }
 
     /**
-     * Set the Precognition header to "true".
-     *
-     * @return $this
-     */
-    public function withPrecognition()
-    {
-        return $this->withHeader('Precognition', 'true');
-    }
-
-    /**
      * Visit the given URI with a GET request.
      *
      * @param  string  $uri
@@ -339,12 +329,11 @@ trait MakesHttpRequests
      *
      * @param  string  $uri
      * @param  array  $headers
-     * @param  int  $options
      * @return \Illuminate\Testing\TestResponse
      */
-    public function getJson($uri, array $headers = [], $options = 0)
+    public function getJson($uri, array $headers = [])
     {
-        return $this->json('GET', $uri, [], $headers, $options);
+        return $this->json('GET', $uri, [], $headers);
     }
 
     /**
@@ -369,12 +358,11 @@ trait MakesHttpRequests
      * @param  string  $uri
      * @param  array  $data
      * @param  array  $headers
-     * @param  int  $options
      * @return \Illuminate\Testing\TestResponse
      */
-    public function postJson($uri, array $data = [], array $headers = [], $options = 0)
+    public function postJson($uri, array $data = [], array $headers = [])
     {
-        return $this->json('POST', $uri, $data, $headers, $options);
+        return $this->json('POST', $uri, $data, $headers);
     }
 
     /**
@@ -399,12 +387,11 @@ trait MakesHttpRequests
      * @param  string  $uri
      * @param  array  $data
      * @param  array  $headers
-     * @param  int  $options
      * @return \Illuminate\Testing\TestResponse
      */
-    public function putJson($uri, array $data = [], array $headers = [], $options = 0)
+    public function putJson($uri, array $data = [], array $headers = [])
     {
-        return $this->json('PUT', $uri, $data, $headers, $options);
+        return $this->json('PUT', $uri, $data, $headers);
     }
 
     /**
@@ -429,12 +416,11 @@ trait MakesHttpRequests
      * @param  string  $uri
      * @param  array  $data
      * @param  array  $headers
-     * @param  int  $options
      * @return \Illuminate\Testing\TestResponse
      */
-    public function patchJson($uri, array $data = [], array $headers = [], $options = 0)
+    public function patchJson($uri, array $data = [], array $headers = [])
     {
-        return $this->json('PATCH', $uri, $data, $headers, $options);
+        return $this->json('PATCH', $uri, $data, $headers);
     }
 
     /**
@@ -459,12 +445,11 @@ trait MakesHttpRequests
      * @param  string  $uri
      * @param  array  $data
      * @param  array  $headers
-     * @param  int  $options
      * @return \Illuminate\Testing\TestResponse
      */
-    public function deleteJson($uri, array $data = [], array $headers = [], $options = 0)
+    public function deleteJson($uri, array $data = [], array $headers = [])
     {
-        return $this->json('DELETE', $uri, $data, $headers, $options);
+        return $this->json('DELETE', $uri, $data, $headers);
     }
 
     /**
@@ -490,12 +475,11 @@ trait MakesHttpRequests
      * @param  string  $uri
      * @param  array  $data
      * @param  array  $headers
-     * @param  int  $options
      * @return \Illuminate\Testing\TestResponse
      */
-    public function optionsJson($uri, array $data = [], array $headers = [], $options = 0)
+    public function optionsJson($uri, array $data = [], array $headers = [])
     {
-        return $this->json('OPTIONS', $uri, $data, $headers, $options);
+        return $this->json('OPTIONS', $uri, $data, $headers);
     }
 
     /**
@@ -521,14 +505,13 @@ trait MakesHttpRequests
      * @param  string  $uri
      * @param  array  $data
      * @param  array  $headers
-     * @param  int  $options
      * @return \Illuminate\Testing\TestResponse
      */
-    public function json($method, $uri, array $data = [], array $headers = [], $options = 0)
+    public function json($method, $uri, array $data = [], array $headers = [])
     {
         $files = $this->extractFilesFromDataArray($data);
 
-        $content = json_encode($data, $options);
+        $content = json_encode($data);
 
         $headers = array_merge([
             'CONTENT_LENGTH' => mb_strlen($content, '8bit'),
@@ -684,7 +667,7 @@ trait MakesHttpRequests
     /**
      * Follow a redirect chain until a non-redirect is received.
      *
-     * @param  \Illuminate\Http\Response|\Illuminate\Testing\TestResponse  $response
+     * @param  \Illuminate\Http\Response  $response
      * @return \Illuminate\Http\Response|\Illuminate\Testing\TestResponse
      */
     protected function followRedirects($response)
