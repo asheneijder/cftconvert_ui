@@ -8,6 +8,7 @@ use App\Models\account_params;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class CompanyController extends Controller
 {
@@ -41,18 +42,40 @@ class CompanyController extends Controller
      */
     public function store(Request $request)
     {
+        $name=$request->file("cft002");
+        $email=$request->file("cft003");
+        $address=$request->file("cft006");
+
+        $destinationPath = "uploads";
+
         $request->validate([
-            'name' => 'nullable',
-            'email' => 'nullable',
-            'address' => 'nullable',
+            'cft002' => 'required',
+            'cft003' => 'required',
+            'cft006' => 'required',
         ]);
 
-        $cft002=$request->name;
-        dd($cft002);
-        $cft003=$request->email;
-        $cft006=$request->address;
+        $store_request = array();
+        if ($name->storeAs($destinationPath, $name->getClientOriginalName())) {
+            $full_path1 = 'uploads/' . "CFT002.dat";
+            $content_name = Storage::get($full_path1);
+            $store_request['name'] = $content_name;
+            $this->f_cft002($get_id, $mode);
+        }
+        if ($email->storeAs($destinationPath, $email->getClientOriginalName())) {
+            $full_path2 = 'uploads/' . "CFT003.dat";
+            $content_email = Storage::get($full_path2);
+            $store_request['email'] = $content_email;
+            $this->f_cft002($get_id, $mode);
+        }
+        if ($address->storeAs($destinationPath, $address->getClientOriginalName())) {
+            $full_path3 = 'uploads/' . "CFT006.dat";
+            $content_address = Storage::get($full_path3);
+            $store_request['address'] = $content_address;
+            $this->f_cft002($get_id, $mode);
+        }
 
-        Company::create($request->post());
+        $store_request = collect($store_request);
+        Company::create($store_request->all());
 
         return redirect()->route('companies.index')->with('success', 'Your data has been successfully save');
     }
@@ -119,7 +142,7 @@ class CompanyController extends Controller
      * Below are the processed checkpoints
      */
 
-    public function f_cft002($get_id)
+    public function f_cft002($get_id, $mode)
     {
         $combinetodat_2 = "";
         $charcount_cft002 = 88;
@@ -153,12 +176,12 @@ class CompanyController extends Controller
             $combinetodat_2 .= substr($_getcft002, -45);
         }
         /**Result**/
-        $fileName = '-CFT002.DAT';
+        $fileName = 'CFT002.dat';
         $fileStorePath = storage_path('app/cft/' . $fileName);
         File::put($fileStorePath, $combinetodat_2);
         $this->f_cft003($get_id);
     }
-    public function f_cft003($get_id)
+    public function f_cft003($get_id, $mode)
     {
         $combinetodat_3 = "";
         $charcount_cft003 = 88;
@@ -193,12 +216,12 @@ class CompanyController extends Controller
         }
 
         /**Result**/
-        $fileName = '-CFT003.DAT';
+        $fileName = 'CFT003.dat';
         $fileStorePath = storage_path('app/cft/' . $fileName);
         File::put($fileStorePath, $combinetodat_3);
         $this->f_cft006($get_id);
     }
-    public function f_cft006($get_id)
+    public function f_cft006($get_id, $mode)
     {
         $combinetodat_6 = "";
         $charcount_cft006 = 70;
@@ -235,7 +258,7 @@ class CompanyController extends Controller
         /**Result**/
         // echo ($combinetodat_6);
         // $fileName = Carbon::now('Asia/Kuala_Lumpur')->isoFormat('DDMMYYYYHHmm') . '-CFT006.DAT';
-        $fileName = '-CFT006.DAT';
+        $fileName = 'CFT006.dat';
         $fileStorePath = storage_path('app/cft/' . $fileName);
         File::put($fileStorePath, $combinetodat_6);
     }
@@ -249,9 +272,9 @@ class CompanyController extends Controller
         $data["title"] = "CFT files has been converted - " . Carbon::now('Asia/Kuala_Lumpur')->isoFormat('DD/MM/YYYY - HH:mm');
 
         $files = [
-            storage_path('app/cft/-CFT002.DAT'),
-            storage_path('app/cft/-CFT003.DAT'),
-            storage_path('app/cft/-CFT006.DAT'),
+            storage_path('app/cft/CFT002.dat'),
+            storage_path('app/cft/CFT003.dat'),
+            storage_path('app/cft/CFT006.dat'),
         ];
 
         Mail::send('emails.tes_general_mailbody', $data, function ($message) use ($data, $files) {
@@ -267,9 +290,9 @@ class CompanyController extends Controller
 
         echo ('--Mail succesfully sent!--');
 
-        File::delete(storage_path('app/cft/-CFT002.DAT'));
-        File::delete(storage_path('app/cft/-CFT003.DAT'));
-        File::delete(storage_path('app/cft/-CFT006.DAT'));
+        File::delete(storage_path('app/cft/CFT002.dat'));
+        File::delete(storage_path('app/cft/CFT003.dat'));
+        File::delete(storage_path('app/cft/CFT006.dat'));
 
         echo ('--Successfully delete--');
     }

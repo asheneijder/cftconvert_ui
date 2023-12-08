@@ -23,6 +23,3 @@ Route::get('/', [divert::class, 'redirectordivert']);
 // });
 
 Route::resource('companies', CompanyController::class);
-// Route::resource('accountparams', AccParamsController::class);
-
-// Route::get('/search',[ AccParamsController::class, 'search']);
