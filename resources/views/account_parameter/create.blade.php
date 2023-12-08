@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>CFT Files Microservices</title>
+    <title>Account Parameter Setup</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 
@@ -12,10 +12,10 @@
         <div class="row">
             <div class="col-lg-12 margin-tb">
                 <div class="pull-left mb-2">
-                    <h2>CFT Data for {{Carbon\Carbon::now()->toDateTimeString()}}</h2>
+                    <h2>Insert New Account Number</h2>
                 </div>
                 <div class="pull-right">
-                    <a class="btn btn-danger" href="{{ route('companies.index') }}"> Back</a>
+                    <a class="btn btn-danger" href="{{ route('accountparams.index') }}"> Back</a>
                 </div>
             </div>
         </div>
@@ -24,32 +24,32 @@
                 {{ session('status') }}
             </div>
         @endif
-        <form action="{{ route('companies.store') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('accountparams.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-12">
                     <div class="form-group">
-                        <strong>CFT002:</strong>
-                        <input type="text" name="name" class="form-control" placeholder="Please COPY AND PASTE the CFT data here for filteration process OR leave blank if no data for this CFT">
-                        @error('name')
+                        <strong>Account Number:</strong>
+                        <input type="text" name="account_no" class="form-control" placeholder="Please insert Account Number">
+                        @error('account_no')
                             <div class="alert alert-danger mt-1 mb-1">{{ $message }}</div>
                         @enderror
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-12">
                     <div class="form-group">
-                        <strong>CFT003:</strong>
-                        <input type="text" name="email" class="form-control" placeholder="Please COPY AND PASTE the CFT data here for filteration process OR leave blank if no data for this CFT">
-                        @error('email')
+                        <strong>Institution:</strong>
+                        <input type="text" name="institution" class="form-control" placeholder="Please insert the institution -> example: PNB">
+                        @error('institution')
                             <div class="alert alert-danger mt-1 mb-1">{{ $message }}</div>
                         @enderror
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-12">
                     <div class="form-group">
-                        <strong>CFT006</strong>
-                        <input type="text" name="address" class="form-control" placeholder="Please COPY AND PASTE the CFT data here for filteration process OR leave blank if no data for this CFT">
-                        @error('address')
+                        <strong>Remarks:</strong>
+                        <input type="text" name="remarks" class="form-control" placeholder="Remarks (Optional)">
+                        @error('remarks')
                             <div class="alert alert-danger mt-1 mb-1">{{ $message }}</div>
                         @enderror
                     </div>

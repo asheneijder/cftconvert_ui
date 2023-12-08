@@ -15,8 +15,8 @@
                     <h2>CFT Files Microservices</h2>
                 </div>
                 <div class="pull-right mb-2">
-                    <a class="btn btn-success" href="{{ route('companies.create') }}">Add CFT Data</a>
-                    {{-- <a class="btn btn-info" href="{{ route('accountparams.index') }}">Account Parameters Setup</a> --}}
+                    <a class="btn btn-success" href="{{ route('accountparams.create') }}">Add CFT Data</a>
+                    <a class="btn btn-info" href="{{ route('accountparams.index') }}">Account Parameters Setup</a>
                 </div>
             </div>
         </div>
@@ -29,24 +29,24 @@
             <thead>
                 <tr>
                     <th>No.</th>
-                    <th>CFT002</th>
-                    <th>CFT003</th>
-                    <th>CFT006</th>
-                    <th>Date Processed</th>
+                    <th>Account Number</th>
+                    <th>Institution</th>
+                    <th>Remarks</th>
+                    <th>Date Recorded</th>
                     <th width="280px">Action</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($companies as $company)
                     <tr>
-                        <td>{{ $company->id }}</td>
-                        <td>{{ Str::substr($company->name, 0, 20) }}</td>
-                        <td>{{ Str::substr($company->email, 0, 20) }}</td>
-                        <td>{{ Str::substr($company->address, 0, 20) }}</td>
-                        <td>{{ $company->created_at }}</td>
+                        <td>{{ $company->id}}</td>
+                        <td>{{ $company->account_no}}</td>
+                        <td>{{ $company->institution}}</td>
+                        <td>{{ $company->remarks}}</td>
+                        <td>{{ $company->created_at}}</td>
                         <td>
-                            <form action="{{ route('companies.destroy', $company->id) }}" method="Post">
-                                <a class="btn btn-primary" href="{{ route('companies.edit', $company->id) }}">Resend Mail</a>
+                            <form action="{{ route('accountparams.destroy', $company->id) }}" method="Post">
+                                <a class="btn btn-primary" href="{{ route('accountparams.edit', $company->id) }}">Resend Mail</a>
                                 @csrf
                                 {{-- @method('DELETE')
                                 <button type="submit" class="btn btn-danger">Delete</button> --}}

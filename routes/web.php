@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\AccParamsController;
 use App\Http\Controllers\redirection\divert;
 
 /*
@@ -22,4 +23,6 @@ Route::get('/', [divert::class, 'redirectordivert']);
 // });
 
 Route::resource('companies', CompanyController::class);
+// Route::resource('accountparams', AccParamsController::class);
 
+// Route::get('/search',[ AccParamsController::class, 'search']);
