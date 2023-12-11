@@ -46,7 +46,7 @@
                         <td>{{ $company->created_at }}</td>
                         <td>
                             <form action="{{ route('companies.destroy', $company->id) }}" method="Post">
-                                <a class="btn btn-primary" href="{{ route('companies.edit', $company->id) }}">Resend Mail</a>
+                                <a class="btn btn-primary" href="{{ route('companies.edit', $company->id) }}">Send Email</a>
                                 @csrf
                                 {{-- @method('DELETE')
                                 <button type="submit" class="btn btn-danger">Delete</button> --}}
