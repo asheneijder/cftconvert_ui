@@ -59,19 +59,16 @@ class CompanyController extends Controller
             $full_path1 = 'uploads/' . "CFT002.dat";
             $content_name = Storage::get($full_path1);
             $store_request['name'] = $content_name;
-            $this->f_cft002($get_id, $mode);
         }
         if ($email->storeAs($destinationPath, $email->getClientOriginalName())) {
             $full_path2 = 'uploads/' . "CFT003.dat";
             $content_email = Storage::get($full_path2);
             $store_request['email'] = $content_email;
-            $this->f_cft002($get_id, $mode);
         }
         if ($address->storeAs($destinationPath, $address->getClientOriginalName())) {
             $full_path3 = 'uploads/' . "CFT006.dat";
             $content_address = Storage::get($full_path3);
             $store_request['address'] = $content_address;
-            $this->f_cft002($get_id, $mode);
         }
 
         $store_request = collect($store_request);
@@ -142,7 +139,7 @@ class CompanyController extends Controller
      * Below are the processed checkpoints
      */
 
-    public function f_cft002($get_id, $mode)
+    public function f_cft002($get_id)
     {
         $combinetodat_2 = "";
         $charcount_cft002 = 88;
@@ -181,7 +178,7 @@ class CompanyController extends Controller
         File::put($fileStorePath, $combinetodat_2);
         $this->f_cft003($get_id);
     }
-    public function f_cft003($get_id, $mode)
+    public function f_cft003($get_id)
     {
         $combinetodat_3 = "";
         $charcount_cft003 = 88;
@@ -221,7 +218,7 @@ class CompanyController extends Controller
         File::put($fileStorePath, $combinetodat_3);
         $this->f_cft006($get_id);
     }
-    public function f_cft006($get_id, $mode)
+    public function f_cft006($get_id)
     {
         $combinetodat_6 = "";
         $charcount_cft006 = 70;
